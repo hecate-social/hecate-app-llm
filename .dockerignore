@@ -1,0 +1,11 @@
+.git
+.github
+*.md
+LICENSE
+scripts/
+
+# Build artifacts
+hecate-app-llmd/_build/
+hecate-app-llmw/node_modules/
+hecate-app-llmw/dist/
+hecate-app-llmw/.svelte-kit/

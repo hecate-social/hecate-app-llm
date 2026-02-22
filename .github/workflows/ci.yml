@@ -1,0 +1,78 @@
+name: CI
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  frontend:
+    name: Frontend (check + build)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: hecate-app-llmw
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: hecate-app-llmw/package-lock.json
+      - run: npm ci
+      - run: npm run check
+      - run: npm run build:lib
+      - uses: actions/upload-artifact@v4
+        with:
+          name: frontend-dist
+          path: hecate-app-llmw/dist/
+          retention-days: 1
+
+  daemon:
+    name: Daemon (compile + test)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: hecate-app-llmd
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: "27"
+          rebar3-version: "3.24"
+      - name: Cache rebar3 deps
+        uses: actions/cache@v4
+        with:
+          path: |
+            hecate-app-llmd/_build/default/lib
+            hecate-app-llmd/_build/default/plugins
+          key: rebar3-${{ runner.os }}-${{ hashFiles('hecate-app-llmd/rebar.config') }}
+          restore-keys: rebar3-${{ runner.os }}-
+      - run: rebar3 compile
+      - run: rebar3 eunit
+      - run: rebar3 dialyzer
+
+  release:
+    name: Build release
+    needs: [frontend, daemon]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: hecate-app-llmd
+    steps:
+      - uses: actions/checkout@v4
+      - uses: erlef/setup-beam@v1
+        with:
+          otp-version: "27"
+          rebar3-version: "3.24"
+      - uses: actions/download-artifact@v4
+        with:
+          name: frontend-dist
+          path: hecate-app-llmd/priv/static/
+      - run: rebar3 get-deps && rebar3 compile
+      - run: rebar3 as prod release
+      - uses: actions/upload-artifact@v4
+        with:
+          name: hecate-app-llmd-release
+          path: hecate-app-llmd/_build/prod/rel/hecate_app_llmd/
+          retention-days: 7

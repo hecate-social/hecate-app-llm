@@ -1,0 +1,25 @@
+{
+	"name": "hecate-app-llmw",
+	"private": true,
+	"version": "0.1.0",
+	"type": "module",
+	"scripts": {
+		"dev": "vite dev --port 5175",
+		"build": "vite build",
+		"build:lib": "vite build --config vite.config.lib.ts",
+		"preview": "vite preview --port 5175",
+		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
+	},
+	"devDependencies": {
+		"@sveltejs/adapter-static": "^3.0.0",
+		"@sveltejs/kit": "^2.50.2",
+		"@sveltejs/vite-plugin-svelte": "^6.2.4",
+		"@tailwindcss/vite": "^4.0.0",
+		"@types/node": "^25.2.3",
+		"svelte": "^5.49.2",
+		"svelte-check": "^4.3.6",
+		"tailwindcss": "^4.0.0",
+		"typescript": "^5.9.3",
+		"vite": "^7.3.1"
+	}
+}

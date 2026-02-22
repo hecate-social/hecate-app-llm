@@ -1,0 +1,7 @@
+-sname hecate_app_llmd
+-setcookie hecate_cookie
+-heart
+-smp auto
++A 16
++P 262144
++Q 16384
