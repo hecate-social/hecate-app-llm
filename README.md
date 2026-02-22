@@ -1,2 +1,2 @@
-# hecate-llm
-A Hecate Plugin for interacting with LLM chat
+# hecate-app-llm
+A Hecate Application for interacting with LLM chat
