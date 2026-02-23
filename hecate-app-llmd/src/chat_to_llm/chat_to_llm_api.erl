@@ -95,9 +95,7 @@ handle_streaming_chat(Req0, Model, Messages, Params, _State) ->
             }, Req0),
             stream_chunks(Req1, Ref);
         {error, {unknown_model, _}} ->
-            app_llmd_api_utils:json_error(404, <<"Model not found in any provider">>, Req0);
-        {error, Reason} ->
-            app_llmd_api_utils:json_error(500, Reason, Req0)
+            app_llmd_api_utils:json_error(404, <<"Model not found in any provider">>, Req0)
     end.
 
 %%% ===================================================================

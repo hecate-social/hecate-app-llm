@@ -60,24 +60,20 @@ terminate(_Reason, #state{timer_ref = TimerRef}) ->
 %% Internal
 
 do_poll(#state{known_models = KnownModels} = State) ->
-    case poll_local_providers() of
-        {ok, CurrentModels} ->
-            CurrentMap = models_to_map(CurrentModels),
-            NewModels = maps:without(maps:keys(KnownModels), CurrentMap),
-            RemovedNames = maps:keys(KnownModels) -- maps:keys(CurrentMap),
+    {ok, CurrentModels} = poll_local_providers(),
+    CurrentMap = models_to_map(CurrentModels),
+    NewModels = maps:without(maps:keys(KnownModels), CurrentMap),
+    RemovedNames = maps:keys(KnownModels) -- maps:keys(CurrentMap),
 
-            maps:foreach(fun(Name, Info) ->
-                emit_detected(Name, Info)
-            end, NewModels),
+    maps:foreach(fun(Name, Info) ->
+        emit_detected(Name, Info)
+    end, NewModels),
 
-            lists:foreach(fun(Name) ->
-                emit_removed(Name)
-            end, RemovedNames),
+    lists:foreach(fun(Name) ->
+        emit_removed(Name)
+    end, RemovedNames),
 
-            State#state{known_models = CurrentMap};
-        {error, _Reason} ->
-            State
-    end.
+    State#state{known_models = CurrentMap}.
 
 %% @doc Only poll providers with type=ollama (local inference).
 poll_local_providers() ->

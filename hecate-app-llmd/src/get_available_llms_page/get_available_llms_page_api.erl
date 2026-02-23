@@ -15,9 +15,5 @@ init(Req0, State) ->
     end.
 
 handle_get(Req0, _State) ->
-    case get_available_llms_page:list() of
-        {ok, Models} ->
-            app_llmd_api_utils:json_ok(#{models => Models}, Req0);
-        {error, Reason} ->
-            app_llmd_api_utils:json_error(500, Reason, Req0)
-    end.
+    {ok, Models} = get_available_llms_page:list(),
+    app_llmd_api_utils:json_ok(#{models => Models}, Req0).
